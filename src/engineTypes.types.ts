@@ -1,44 +1,45 @@
-export const availableOperatorsType = {
-	equals: "same",
-	greaterThan: "number",
-	lessThan: "number",
-	endsWith: "string",
-	startsWith: "string",
-} as const;
+import OPERATORS from "./operators";
 
-export type Facts = Record<string, string | number>;
-
-export type Operand = number | string;
-
-export type Operator = keyof typeof availableOperatorsType;
-
-export type Condition = {
-	fact: string;
-	operator: Operator;
-	value: string | number;
+export type DecisionTree = {
+	context: Context;
+	ruleEvaluations: RuleEvaluationResult[];
+	winningRuleId?: string;
 };
 
-export interface Action {
+export type ConditionEvalResult = {
+	condition: string;
+	result: boolean;
+	reason: string;
+};
+
+export type RuleEvaluationResult = {
+	ruleId: string;
+	matched: boolean;
+	conditionResults: ConditionEvalResult[];
+};
+
+export type Action = {
 	type: string;
-	params: Facts;
-}
+	params: Record<string, string>;
+};
 
 export type Rule = {
 	id: string;
-	conditions: Condition[];
 	action: Action;
+	conditions: Condition[];
 	priority: number;
 };
 
-export type ConditionResult = { condition: Condition; result: boolean };
+export type Context = Record<string, string | number>;
 
-export type Decision = {
-	matchedRule: string[];
-	actions: Action[];
-	tracing: ConditionResult[];
+export type OperatorCollection = typeof OPERATORS;
+export type Operator = keyof OperatorCollection;
+export type OperatorSecondParameter<K extends Operator> = Parameters<
+	OperatorCollection[K]["calculate"]
+>[1];
+
+export type Condition<K extends Operator = Operator> = {
+	field: string;
+	operator: K;
+	value: OperatorSecondParameter<K>;
 };
-
-export type Operation = <T extends Operand>(
-	operand1: T,
-	operand2: T
-) => boolean;

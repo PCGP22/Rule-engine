@@ -1,22 +1,34 @@
-import type { Operation, Operand } from "./engineTypes.types";
+const OPERATORS = {
+	equals: {
+		calculate: (operand1: string, operand2: string) => operand1 === operand2,
+		firstOperandType: "string",
+	},
+	notEquals: {
+		calculate: (operand1: string, operand2: string) => operand1 !== operand2,
+		firstOperandType: "string",
+	},
+	greaterThan: {
+		calculate: (operand1: number, operand2: number) => operand1 > operand2,
+		firstOperandType: "number",
+	},
+	lessThan: {
+		calculate: (operand1: number, operand2: number) => operand1 < operand2,
+		firstOperandType: "number",
+	},
+	in: {
+		calculate: (operand1: string, operand2: string[]) =>
+			operand2.includes(operand1),
+		firstOperandType: "string",
+	},
+	between: {
+		calculate: (operand1: number, operand2: [number, number]) =>
+			operand1 >= operand2[0] && operand1 <= operand2[1],
+		firstOperandType: "number",
+	},
+	matches: {
+		calculate: (operand1: string, operand2: RegExp) => operand2.test(operand1),
+		firstOperandType: "string",
+	},
+} as const;
 
-const operatorMap = new Map<string, Operation>([
-	["equals", (operand1: Operand, operand2: Operand) => operand1 === operand2],
-	[
-		"greaterThan",
-		(operand1: Operand, operand2: Operand) => operand1 > operand2,
-	],
-	["lessThan", (operand1: Operand, operand2: Operand) => operand1 < operand2],
-	[
-		"endsWith",
-		(operand1: Operand, operand2: Operand) =>
-			String(operand1).endsWith(String(operand2)),
-	],
-	[
-		"startsWith",
-		(operand1: Operand, operand2: Operand) =>
-			String(operand1).startsWith(String(operand2)),
-	],
-]);
-
-export default operatorMap;
+export default OPERATORS;
